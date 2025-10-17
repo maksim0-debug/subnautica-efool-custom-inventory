@@ -23,7 +23,7 @@ public class OptionsMenu : ModOptions
 	private ConfigPerSave _custom = new ConfigPerSave();
 	private ConfigPerSave _current;
 
-	public bool inGame { get; set; } = false;
+	public bool inGame { get => Player.main != null; }
 
 	public OptionsMenu(object inst)
 		: base(Info.title)

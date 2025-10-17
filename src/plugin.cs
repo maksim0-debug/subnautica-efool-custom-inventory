@@ -53,9 +53,7 @@ public class Plugin : BaseUnityPlugin
 			}
 			game.Load();
 		});
-		SaveUtils.RegisterOnFinishLoadingEvent(() => optionsMenu.inGame = true);
 		SaveUtils.RegisterOnSaveEvent(() => game.Save());
-		SaveUtils.RegisterOnQuitEvent(() => optionsMenu.inGame = false);
 
 		ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
 
