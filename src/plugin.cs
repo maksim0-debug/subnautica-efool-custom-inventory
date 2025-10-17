@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-
-using HarmonyLib;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 using BepInEx;
 using BepInEx.Logging;
+
+using HarmonyLib;
 
 using Nautilus.Handlers;
 using Nautilus.Utility;
@@ -35,11 +36,20 @@ public class Plugin : BaseUnityPlugin
 #endif
 	}
 
+	public static InputAction inputMoveAllItemType = new InputAction(name: "moveAllItemType", type: InputActionType.PassThrough, binding: "<Keyboard>/leftCtrl");
+	public static InputAction inputMoveAllItems = new InputAction(name: "moveAllItems", type: InputActionType.PassThrough, binding: "<Keyboard>/leftShift");
+	public static InputAction inputPinItem = new InputAction(name: "pinItem", type: InputActionType.PassThrough, binding: "<Keyboard>/leftAlt");
+
 	private void Awake()
 	{
 		log = Logger;
 
+		inputMoveAllItemType.Enable();
+		inputMoveAllItems   .Enable();
+		inputPinItem        .Enable();
+
 		config = new ConfigGlobal();
+		config.OnFinishedLoading += (o, e) => config.bindInputActions();
 		config.Load();
 
 		optionsMenu = new OptionsMenu(config);
@@ -345,7 +355,7 @@ static class Patch
 			return false;
 
 		var itemAction = Inventory.main.GetItemAction(item, button);
-		if ( Plugin.config.keyPinItem.GetKeyHeld() ) {
+		if ( Plugin.inputPinItem.IsPressed() ) {
 			if ( button == 0 )
 				PinItem.handlePinItemAction(item);
 		}
@@ -355,7 +365,7 @@ static class Patch
 
 		__instance.equipment.ExtinguishSlots();
 
-		if ( itemAction != ItemAction.None || GameInput.GetPrimaryDevice() != GameInput.Device.Controller || button != 1 )
+		if ( itemAction != ItemAction.None || GameInput.PrimaryDevice != GameInput.Device.Controller || button != 1 )
 			return false;
 
 		Player.main.GetPDA().Close();
@@ -527,12 +537,12 @@ public static class PinItem
 
 		var itemPinned = isPinned(item);
 		var targetItems = new List<InventoryItem>();
-		if ( Plugin.config.keyMoveAllItems.GetKeyHeld() ) {
+		if ( Plugin.inputMoveAllItems.IsPressed() ) {
 			foreach ( var e in container )
 				if ( isPinned(e) == itemPinned )
 					targetItems.Add(e);
 		}
-		else if ( Plugin.config.keyMoveAllItemType.GetKeyHeld() ) {
+		else if ( Plugin.inputMoveAllItemType.IsPressed() ) {
 			foreach ( var e in container.GetItems(item.item.GetTechType()) )
 				if ( isPinned(e) == itemPinned )
 					targetItems.Add(e);
@@ -561,14 +571,14 @@ public static class PinItem
 	public static void handleItemAction(InventoryItem item, ItemAction itemAction)
 	{
 		var targetItems = new List<InventoryItem>();
-		if ( Plugin.config.keyMoveAllItems.GetKeyHeld() ) {
+		if ( Plugin.inputMoveAllItems.IsPressed() ) {
 			foreach ( var e in item.container )
 				if ( !isPinned(e) )
 					targetItems.Add(e);
 		}
 		else {
 			var container = item.container as ItemsContainer;
-			if ( container != null && Plugin.config.keyMoveAllItemType.GetKeyHeld() ) {
+			if ( container != null && Plugin.inputMoveAllItemType.IsPressed() ) {
 				foreach ( var e in container.GetItems(item.item.GetTechType()) )
 					if ( !isPinned(e) )
 						targetItems.Add(e);

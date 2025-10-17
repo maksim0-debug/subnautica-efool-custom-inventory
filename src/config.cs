@@ -6,15 +6,16 @@ using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 using Newtonsoft.Json;
 
+using Nautilus.Commands;
 using Nautilus.Json;
 using Nautilus.Json.Attributes;
-using Nautilus.Options.Attributes;
 using Nautilus.Options;
-using Nautilus.Commands;
+using Nautilus.Options.Attributes;
 
 namespace org.efool.subnautica.custom_inventory {
 
@@ -153,7 +154,8 @@ public class OptionsMenu : ModOptions
 
 			_current.copySettings(presetConfigs[idx]);
 		};
-		var presetObject = panel.AddChoiceOption(modsTabIndex, "Preset", presetChoices.ToArray(), presetIdx, callback: onPreset).GetComponentInChildren<uGUI_Choice>();
+		var presetObject = panel.AddChoiceOption(modsTabIndex, "Preset", presetChoices.ToArray(), presetIdx, callback: onPreset)
+			.GetComponentInChildren<uGUI_Choice>();
 
 		for ( int fieldIdx = 0; fieldIdx < fields.Count; ++fieldIdx ) {
 			switch ( fields[fieldIdx].GetCustomAttribute<ModOptionAttribute>() ) {
@@ -299,12 +301,30 @@ public class ConfigGlobal : ConfigFile
 	[Slider("Storage Scroll Pane Padding Top", -32, 32, DefaultValue = 0), OnChange(nameof(syncScrollPanes))]
 	public float storageMaskPadding_top = -8;
 
-	[Keybind("Move all items of type")]
-	public KeyCode keyMoveAllItemType = KeyCode.LeftControl;
-	[Keybind("Move all items")]
-	public KeyCode keyMoveAllItems = KeyCode.LeftShift;
-	[Keybind("Pin item")]
-	public KeyCode keyPinItem = KeyCode.LeftAlt;
+	// todo: Keybinds are broken in Nautilus 1.0.0pre44
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItemType;
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItems;
+	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputPinItem;
+
+	public void bind(InputAction input, string key, string val)
+	{
+		if ( string.IsNullOrEmpty(val) )
+			return;
+
+		try {
+			input.ApplyBindingOverride(val);
+		}
+		catch ( Exception ex ) {
+			Plugin.log.LogError($"Config '{key}' has invalid InputAction: {ex.Message}");
+		}
+	}
+
+	public void bindInputActions()
+	{
+		bind(Plugin.inputMoveAllItemType, "inputMoveAllItemType", inputMoveAllItemType);
+		bind(Plugin.inputMoveAllItems   , "inputMoveAllItems"   , inputMoveAllItems   );
+		bind(Plugin.inputPinItem        , "inputPinItem"        , inputPinItem        );
+	}
 
 	private static readonly FieldInfo field_uGUI_ItemsContainer_container = typeof(uGUI_ItemsContainer).GetField("container", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 	public void syncItemsContainer(uGUI_ItemsContainer guiItemsContainer)
