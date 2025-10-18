@@ -12,8 +12,6 @@ using UnityEngine.UI;
 using Newtonsoft.Json;
 
 using Nautilus.Commands;
-using Nautilus.Json;
-using Nautilus.Json.Attributes;
 using Nautilus.Options;
 using Nautilus.Options.Attributes;
 
@@ -258,7 +256,7 @@ public class OptionsMenu : ModOptions
 }
 
 [Menu(Info.title)]
-public class ConfigGlobal : ConfigFile
+public class ConfigGlobal
 {
 	public string presetDefault = "";
 
@@ -305,6 +303,25 @@ public class ConfigGlobal : ConfigFile
 	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItemType;
 	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItems;
 	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputPinItem;
+
+	[JsonIgnore]
+	public string path
+	{
+		get {
+			return Path.Combine(BepInEx.Paths.ConfigPath, Info.name, "config.json");
+		}
+	}
+
+	public void load()
+	{
+		Util.loadJsonFile(this, path);
+		bindInputActions();
+	}
+
+	public void save()
+	{
+		Util.saveJsonFile(this, path);
+	}
 
 	public void bind(InputAction input, string key, string val)
 	{
@@ -368,8 +385,7 @@ public class ConfigGlobal : ConfigFile
 	}
 }
 
-[FileName(Info.name)]
-public class ConfigPerSave : SaveDataCache
+public class ConfigPerSave
 {
 	public static readonly List<FieldInfo> fieldsSettings = new List<FieldInfo>(
 		from x in typeof(ConfigPerSave).GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).AsEnumerable()
@@ -392,6 +408,29 @@ public class ConfigPerSave : SaveDataCache
 			field.SetValue(this, field.GetValue(a));
 	}
 
+	[JsonIgnore]
+	public string path
+	{
+		get {
+			var saveDir = SaveLoadManager.GetTemporarySavePath();
+			if (string.IsNullOrEmpty(saveDir))
+				return null;
+
+			return Path.Combine(saveDir, Info.name, Info.name + ".json");
+		}
+	}
+
+	public void load()
+	{
+		Util.loadJsonFile(this, path);
+	}
+
+	public void save()
+	{
+		var path = this.path;
+		Util.saveJsonFile(this, path);
+	}
+
 	public static readonly ConfigPerSave default_ = new ConfigPerSave();
 	public static DateTime presetsLastAccess;
 	public static Dictionary<string, ConfigPerSave> presets;
@@ -403,11 +442,12 @@ public class ConfigPerSave : SaveDataCache
 			if ( lastAccess != presetsLastAccess ) {
 				presetsLastAccess = lastAccess;
 				try {
-					presets = JsonConvert.DeserializeObject<Dictionary<string, ConfigPerSave>>(File.ReadAllText(presetsPath));
-				}
-				catch (Exception e) {
 					presets = new Dictionary<string, ConfigPerSave>();
-					Plugin.log.LogError(e);
+					Util.loadJsonFile(presets, presetsPath);
+				}
+				catch ( Exception ex ) {
+					presets = new Dictionary<string, ConfigPerSave>();
+					Plugin.log.LogError(ex);
 				}
 
 				return true;
@@ -564,6 +604,66 @@ public static class Commands
 	[ConsoleCommand("set_planterbox_height"             )] public static void set_planterbox_height             (int x) { Plugin.game.planterbox_height              = x; OptionsMenu.applyStorageContainer(); }
 	[ConsoleCommand("set_planter_width"                 )] public static void set_planter_width                 (int x) { Plugin.game.planter_width                  = x; OptionsMenu.applyStorageContainer(); }
 	[ConsoleCommand("set_planter_height"                )] public static void set_planter_height                (int x) { Plugin.game.planter_height                 = x; OptionsMenu.applyStorageContainer(); }
+}
+
+public static class Util
+{
+	public static void loadJsonFile<T>(T dst, string path)
+	{
+		if ( path is null )
+			return;
+
+		if ( !File.Exists(path) )
+			return;
+
+		try {
+			using ( var stream = new FileStream(path, FileMode.Open, FileAccess.Read) )
+			using ( var reader = new StreamReader(stream) )
+			using ( var jsonReader = new JsonTextReader(reader) ) {
+				var serializer = new JsonSerializer();
+				serializer.Populate(jsonReader, dst);
+			}
+		} catch ( Exception ex ) {
+			Plugin.log.LogError($"Failed to load json file: {path}");
+			Plugin.log.LogError(ex);
+		}
+	}
+
+	public static void saveJsonFile<T>(T dst, string path)
+	{
+		if ( path is null )
+			return;
+
+		var tmp = path + ".tmp";
+		try {
+			{
+				var dir = Path.GetDirectoryName(tmp);
+				if ( !string.IsNullOrEmpty(dir) )
+					Directory.CreateDirectory(dir);
+			}
+
+			using ( var stream = new FileStream(tmp, FileMode.Create, FileAccess.Write) )
+			using ( var writer = new StreamWriter(stream) )
+			using ( var jsonWriter = new JsonTextWriter(writer) ) {
+				jsonWriter.Formatting = Formatting.Indented;
+				jsonWriter.IndentChar = '\t';
+				jsonWriter.Indentation = 1;
+
+				var serializer = new JsonSerializer();
+				serializer.Serialize(jsonWriter, dst);
+			}
+
+			if ( File.Exists(path) )
+				File.Replace(tmp, path, null);
+			else
+				File.Move(tmp, path);
+		} catch ( Exception ex ) {
+			Plugin.log.LogError($"Failed to save game data: {path}");
+			Plugin.log.LogError(ex);
+			if ( File.Exists(tmp) )
+				File.Delete(tmp);
+		}
+	}
 }
 
 } // namespace org.efool.subnautica.custom_inventory

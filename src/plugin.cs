@@ -36,9 +36,9 @@ public class Plugin : BaseUnityPlugin
 #endif
 	}
 
-	public static InputAction inputMoveAllItemType = new InputAction(name: "moveAllItemType", type: InputActionType.PassThrough, binding: "<Keyboard>/leftCtrl");
-	public static InputAction inputMoveAllItems = new InputAction(name: "moveAllItems", type: InputActionType.PassThrough, binding: "<Keyboard>/leftShift");
-	public static InputAction inputPinItem = new InputAction(name: "pinItem", type: InputActionType.PassThrough, binding: "<Keyboard>/leftAlt");
+	public static InputAction inputMoveAllItemType = new InputAction(name: "moveAllItemType", type: InputActionType.PassThrough, binding: "<Keyboard>/leftCtrl" );
+	public static InputAction inputMoveAllItems    = new InputAction(name: "moveAllItems"   , type: InputActionType.PassThrough, binding: "<Keyboard>/leftShift");
+	public static InputAction inputPinItem         = new InputAction(name: "pinItem"        , type: InputActionType.PassThrough, binding: "<Keyboard>/leftAlt"  );
 
 	private void Awake()
 	{
@@ -49,21 +49,20 @@ public class Plugin : BaseUnityPlugin
 		inputPinItem        .Enable();
 
 		config = new ConfigGlobal();
-		config.OnFinishedLoading += (o, e) => config.bindInputActions();
-		config.Load();
+		config.load();
 
 		optionsMenu = new OptionsMenu(config);
 		OptionsPanelHandler.RegisterModOptions(optionsMenu);
 
-		SaveUtils.RegisterOnStartLoadingEvent(() => {
+		WaitScreenHandler.RegisterEarlyLoadTask(custom_inventory.Info.title, (_) => {
 			game = new ConfigPerSave();
 			if ( !config.presetDefault.IsNullOrWhiteSpace() ) {
 				ConfigPerSave.loadPresets();
 				game.copySettings(ConfigPerSave.presets.GetOrDefault(config.presetDefault, ConfigPerSave.default_));
 			}
-			game.Load();
+			game.load();
 		});
-		SaveUtils.RegisterOnSaveEvent(() => game.Save());
+		SaveUtils.RegisterOnSaveEvent(() => game.save());
 
 		ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
 
@@ -80,7 +79,7 @@ static class Patch
 	[HarmonyPatch(typeof(uGUI_OptionsPanel), nameof(uGUI_OptionsPanel.OnSave))]
 	public static void uGUI_OptionsPanel_OnSave(uGUI_OptionsPanel __instance, UserStorageUtils.SaveOperation saveOperation)
 	{
-		Plugin.config.Save();
+		Plugin.config.save();
 		Plugin.config.syncScrollPanes();
 		Plugin.optionsMenu.applyChanges();
 	}
