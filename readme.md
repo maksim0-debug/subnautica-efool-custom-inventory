@@ -27,18 +27,18 @@
 
 # Requirements
 
-- Subnautica Living Large Update 71288
+- Subnautica patch Oct-2025 83031
 - Tobey's BepInEx Pack v5
 	- [Nexus Mods](https://www.nexusmods.com/subnautica/mods/1108)
 	- [Github](https://github.com/toebeann/BepInEx.Subnautica)
-- Nautilus v1
+- Nautilus v1.0.0-pre.43 (or later)
 	- [Nexus Mods](https://www.nexusmods.com/subnautica/mods/1262)
 	- [Github](https://github.com/SubnauticaModding/Nautilus)
 
 # Installation
 
 - Install Tobey's BepInEx Pack v5
-- Install Nautilus v1
+- Install Nautilus v1.0.0-pre.43 (or later)
 - Extract `efool-custom-inventory_#.#.#.zip` to `BepInEx/plugins`
 	- `[game]/BepInEx/plugins/efool-custom-inventory/efool-custom-inventory.dll`
 	- `[game]/BepInEx/plugins/efool-custom-inventory/presets.json`
@@ -49,63 +49,78 @@ Note: `[game]` is the directory containing `Subnautica.exe`
 
 There is no UI option to modify presets. Manually modify `presets.json` at the installed location `[game]/BepInEx/plugins/efool-custom-inventory/presets.json` to add your own entry. See `efool's Hoarder Rules` as a reference.
 
+# Custom Keybinds
+
+Keybinds can no longer be configured in the options menu since Subnautica patch Oct-2025. Instead they must now be configured by manually editing the mod config file:
+
+1. Open `[game]/BepInEx/config/efool-custom-inventory/config.json`
+2. Add/edit:
+
+| Key                    | Default value          |
+| ---------------------- | ---------------------- |
+| `inputMoveAllItemType` | `<Keyboard>/leftCtrl`  |
+| `inputMoveAllItems`    | `<Keyboard>/leftShift` |
+| `inputPinItem`         | `<Keyboard>/leftAlt`   |
+
+3. Restart game to refresh configuration
+
 # Console Commands
 
-| Description                           | Command                            |
-| ------------------------------------- | ---------------------------------- |
-| Player inventory width                | set_inventory_width                |
-| Player inventory height               | set_inventory_height               |
-| Locker width                          | set_locker_width                   |
-| Locker height                         | set_locker_height                  |
-| Wall locker width                     | set_smalllocker_width              |
-| Wall locker height                    | set_smalllocker_height             |
-| Waterproof locker width               | set_smallstorage_width             |
-| Waterproof locker height              | set_smallstorage_height            |
-| Carry-all width                       | set_luggagebag_width               |
-| Carry-all height                      | set_luggagebag_height              |
-| Lifepod 5 storage width               | set_lifepodLocker_width            |
-| Lifepod 5 storage height              | set_lifepodLocker_height           |
-| Seamoth storage width                 | set_seamoth_width                  |
-| Seamoth storage height                | set_seamoth_height                 |
-| Prawn suit storage width              | set_exosuit_width                  |
-| Prawn suit storage height             | set_exosuit_height                 |
-| Prawn suit height per storage module  | set_exosuitStorageModule_height    |
-| Cyclops storage locker default width  | set_cyclopsLocker_width            |
-| Cyclops sotrage locker default height | set_cyclopsLocker_height           |
-| Cyclops storage locker 1 width        | set_cyclopsLocker1_width           |
-| Cyclops storage locker 1 height       | set_cyclopsLocker1_height          |
-| Cyclops storage locker 2 width        | set_cyclopsLocker2_width           |
-| Cyclops storage locker 2 height       | set_cyclopsLocker2_height          |
-| Cyclops storage locker 3 width        | set_cyclopsLocker3_width           |
-| Cyclops storage locker 3 height       | set_cyclopsLocker3_height          |
-| Cyclops storage locker 4 width        | set_cyclopsLocker4_width           |
-| Cyclops storage locker 4 height       | set_cyclopsLocker4_height          |
-| Cyclops storage locker 5 width        | set_cyclopsLocker5_width           |
-| Cyclops storage locker 5 height       | set_cyclopsLocker5_height          |
-| Scanner room upgrades width           | set_maproomupgrades_width          |
-| Scanner room upgrades height          | set_maproomupgrades_height         |
-| Bioreactor width                      | set_basebioreactor_width           |
-| Bioreactor height                     | set_basebioreactor_height          |
-| Filtration machine max salt           | set_basefiltrationMachine_maxSalt  |
-| Filtration machine max water          | set_basefiltrationMachine_maxWater |
-| Nuclear waste disposal width          | set_labtrashcan_width              |
-| Nuclear waste disposal height         | set_labtrashcan_height             |
-| Trash can width                       | set_trashcans_width                |
-| Trash can height                      | set_trashcans_height               |
-| Basic plant pot width                 | set_planterpot_width               |
-| Basic plant pot height                | set_planterpot_height              |
-| Composite plant pot width             | set_planterpot2_width              |
-| Composite plant pot height            | set_planterpot2_height             |
-| Chic plant pot width                  | set_planterpot3_width              |
-| Chic plant pot height                 | set_planterpot3_height             |
-| Plant shelf width                     | set_plantershelf_width             |
-| Plant shelf height                    | set_plantershelf_height            |
-| Exterior growbed width                | set_farmingtray_width              |
-| Exterior growbed height               | set_farmingtray_height             |
-| Indoor growbed width                  | set_planterbox_width               |
-| Indoor growbed height                 | set_planterbox_height              |
-| Alien containment planter width       | set_planter_width                  |
-| Alien containment planter height      | set_planter_height                 |
+| Description                           | Command                              |
+| ------------------------------------- | ------------------------------------ |
+| Player inventory width                | `set_inventory_width`                |
+| Player inventory height               | `set_inventory_height`               |
+| Locker width                          | `set_locker_width`                   |
+| Locker height                         | `set_locker_height`                  |
+| Wall locker width                     | `set_smalllocker_width`              |
+| Wall locker height                    | `set_smalllocker_height`             |
+| Waterproof locker width               | `set_smallstorage_width`             |
+| Waterproof locker height              | `set_smallstorage_height`            |
+| Carry-all width                       | `set_luggagebag_width`               |
+| Carry-all height                      | `set_luggagebag_height`              |
+| Lifepod 5 storage width               | `set_lifepodLocker_width`            |
+| Lifepod 5 storage height              | `set_lifepodLocker_height`           |
+| Seamoth storage width                 | `set_seamoth_width`                  |
+| Seamoth storage height                | `set_seamoth_height`                 |
+| Prawn suit storage width              | `set_exosuit_width`                  |
+| Prawn suit storage height             | `set_exosuit_height`                 |
+| Prawn suit height per storage module  | `set_exosuitStorageModule_height`    |
+| Cyclops storage locker default width  | `set_cyclopsLocker_width`            |
+| Cyclops sotrage locker default height | `set_cyclopsLocker_height`           |
+| Cyclops storage locker 1 width        | `set_cyclopsLocker1_width`           |
+| Cyclops storage locker 1 height       | `set_cyclopsLocker1_height`          |
+| Cyclops storage locker 2 width        | `set_cyclopsLocker2_width`           |
+| Cyclops storage locker 2 height       | `set_cyclopsLocker2_height`          |
+| Cyclops storage locker 3 width        | `set_cyclopsLocker3_width`           |
+| Cyclops storage locker 3 height       | `set_cyclopsLocker3_height`          |
+| Cyclops storage locker 4 width        | `set_cyclopsLocker4_width`           |
+| Cyclops storage locker 4 height       | `set_cyclopsLocker4_height`          |
+| Cyclops storage locker 5 width        | `set_cyclopsLocker5_width`           |
+| Cyclops storage locker 5 height       | `set_cyclopsLocker5_height`          |
+| Scanner room upgrades width           | `set_maproomupgrades_width`          |
+| Scanner room upgrades height          | `set_maproomupgrades_height`         |
+| Bioreactor width                      | `set_basebioreactor_width`           |
+| Bioreactor height                     | `set_basebioreactor_height`          |
+| Filtration machine max salt           | `set_basefiltrationMachine_maxSalt`  |
+| Filtration machine max water          | `set_basefiltrationMachine_maxWater` |
+| Nuclear waste disposal width          | `set_labtrashcan_width`              |
+| Nuclear waste disposal height         | `set_labtrashcan_height`             |
+| Trash can width                       | `set_trashcans_width`                |
+| Trash can height                      | `set_trashcans_height`               |
+| Basic plant pot width                 | `set_planterpot_width`               |
+| Basic plant pot height                | `set_planterpot_height`              |
+| Composite plant pot width             | `set_planterpot2_width`              |
+| Composite plant pot height            | `set_planterpot2_height`             |
+| Chic plant pot width                  | `set_planterpot3_width`              |
+| Chic plant pot height                 | `set_planterpot3_height`             |
+| Plant shelf width                     | `set_plantershelf_width`             |
+| Plant shelf height                    | `set_plantershelf_height`            |
+| Exterior growbed width                | `set_farmingtray_width`              |
+| Exterior growbed height               | `set_farmingtray_height`             |
+| Indoor growbed width                  | `set_planterbox_width`               |
+| Indoor growbed height                 | `set_planterbox_height`              |
+| Alien containment planter width       | `set_planter_width`                  |
+| Alien containment planter height      | `set_planter_height`                 |
 
 # Known Issues
 
@@ -115,6 +130,7 @@ There is no UI option to modify presets. Manually modify `presets.json` at the i
 - Bulk item drop occludes PDA
 	- Workaround: close PDA to allow items to move away or manually look elsewhere before opening PDA again
 - Only tested on keyboard/mouse
+- Keybinds cannot be configured in the options menu
 
 # Other Mods
 
