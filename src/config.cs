@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -491,8 +491,8 @@ public class ConfigPerSave
 
 	[Slider("Lifepod 5 Storage Width"              , 1, 8  , Step = 1, DefaultValue = 4  )] public int lifepodLocker_width  = 4;
 	[Slider("Lifepod 5 Storage Height"             , 1, max, Step = 1, DefaultValue = max)] public int lifepodLocker_height = 8;
-	[Slider("Seamoth Storage Module Width"         , 1, 8  , Step = 1, DefaultValue = 6  )] public int seamoth_width  = 6;
-	[Slider("Seamoth Storage Module Height"        , 1, max, Step = 1, DefaultValue = max)] public int seamoth_height = 6;
+	[Slider("Seamoth Storage Module Width"         , 1, 8  , Step = 1, DefaultValue = 4  )] public int seamoth_width  = 4;
+	[Slider("Seamoth Storage Module Height"        , 1, max, Step = 1, DefaultValue = max)] public int seamoth_height = 4;
 	[Slider("Prawn Suit Storage Width"             , 1, 8  , Step = 1, DefaultValue = 6  )] public int exosuit_width               = 6;
 	[Slider("Prawn Suit Storage Height"            , 1, max, Step = 1, DefaultValue = max)] public int exosuit_height              = 4;
 	[Slider("Prawn Suit Height Per Storage Module" , 1, max, Step = 1, DefaultValue = max)] public int exosuitStorageModule_height = 1;
