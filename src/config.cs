@@ -401,25 +401,30 @@ public class ConfigPerSave
 
 	public static readonly ConfigPerSave default_ = new ConfigPerSave();
 	public static DateTime presetsLastAccess;
-	public static Dictionary<string, ConfigPerSave> presets;
+	public static Dictionary<string, ConfigPerSave> presets = new Dictionary<string, ConfigPerSave>();
 	public static bool loadPresets()
 	{
 		var presetsPath = Path.Combine(Path.GetDirectoryName(typeof(Plugin).Assembly.Location), "presets.json");
-		if ( File.Exists(presetsPath) ) {
-			var lastAccess = new FileInfo(presetsPath).LastWriteTime;
-			if ( lastAccess != presetsLastAccess ) {
-				presetsLastAccess = lastAccess;
-				try {
-					presets = new Dictionary<string, ConfigPerSave>();
-					Util.loadJsonFile(presets, presetsPath);
-				}
-				catch ( Exception ex ) {
-					presets = new Dictionary<string, ConfigPerSave>();
-					Plugin.log.LogError(ex);
-				}
+		if ( !File.Exists(presetsPath) ) {
+			Plugin.log.LogWarning($"Missing presets: {presetsPath}");
+			return false;
+		}
 
-				return true;
+		var lastAccess = new FileInfo(presetsPath).LastWriteTime;
+		if ( lastAccess != presetsLastAccess ) {
+			presetsLastAccess = lastAccess;
+			try {
+				var newPresets = new Dictionary<string, ConfigPerSave>();
+				Util.loadJsonFile(newPresets, presetsPath);
+
+				presets = newPresets;
 			}
+			catch ( Exception ex ) {
+				Plugin.log.LogError($"Failed to load presets: {presetsPath}");
+				Plugin.log.LogError(ex);
+			}
+
+			return true;
 		}
 
 		return false;
