@@ -39,19 +39,25 @@ public class Plugin : BaseUnityPlugin
 		.CreateInput()
 		.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
 		.WithKeyboardBinding("<Keyboard>/leftCtrl")
+		.WithControllerBinding("<Gamepad>/leftTrigger")
+		.AvoidConflicts()
 		.SetBindable();
 
 	public static GameInput.Button inputMoveAllItems = EnumHandler.AddEntry<GameInput.Button>("Move all items")
 		.CreateInput()
 		.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
 		.WithKeyboardBinding("<Keyboard>/leftShift")
+		.WithControllerBinding("<Gamepad>/rightTrigger")
+		.AvoidConflicts()
 		.SetBindable();
 
 	public static GameInput.Button inputPinItem = EnumHandler.AddEntry<GameInput.Button>("Pin item")
-			.CreateInput()
-			.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
-			.WithKeyboardBinding("<Keyboard>/leftAlt")
-			.SetBindable();
+		.CreateInput()
+		.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
+		.WithKeyboardBinding("<Keyboard>/leftAlt")
+		.WithControllerBinding("<Gamepad>/leftStickPress")
+		.AvoidConflicts()
+		.SetBindable();
 
 	private void Awake()
 	{

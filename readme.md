@@ -114,7 +114,6 @@ There is no UI option to modify presets. Manually modify `presets.json` at the i
 - Planter inventory sizes have no effect
 - Bulk item drop occludes PDA
 	- Workaround: close PDA to allow items to move away or manually look elsewhere before opening PDA again
-- Only tested on keyboard/mouse
 
 # Other Mods
 
