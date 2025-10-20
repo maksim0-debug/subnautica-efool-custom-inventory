@@ -6,7 +6,6 @@ using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 using Newtonsoft.Json;
@@ -38,11 +37,6 @@ public class OptionsMenu : ModOptions
 				var toggle = ModToggleOption.Create(attr.Id, attr.Label, (bool)field.GetValue(inst), tooltip: attr.Tooltip);
 				toggle.OnChanged += (_, e) => field.SetValue(inst, e.Value);
 				AddItem(toggle);
-				break;
-			case KeybindAttribute attr:
-				var keybind = ModKeybindOption.Create(attr.Id, attr.Label, GameInput.Device.Keyboard, (KeyCode)field.GetValue(inst), tooltip: attr.Tooltip);
-				keybind.OnChanged += (_, e) => field.SetValue(inst, e.Value);
-				AddItem(keybind);
 				break;
 			}
 		}
@@ -299,11 +293,6 @@ public class ConfigGlobal
 	[Slider("Storage Scroll Pane Padding Top", -32, 32, DefaultValue = 0), OnChange(nameof(syncScrollPanes))]
 	public float storageMaskPadding_top = -8;
 
-	// todo: Keybinds are broken in Nautilus 1.0.0pre44
-	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItemType;
-	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputMoveAllItems;
-	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string inputPinItem;
-
 	[JsonIgnore]
 	public string path
 	{
@@ -315,32 +304,11 @@ public class ConfigGlobal
 	public void load()
 	{
 		Util.loadJsonFile(this, path);
-		bindInputActions();
 	}
 
 	public void save()
 	{
 		Util.saveJsonFile(this, path);
-	}
-
-	public void bind(InputAction input, string key, string val)
-	{
-		if ( string.IsNullOrEmpty(val) )
-			return;
-
-		try {
-			input.ApplyBindingOverride(val);
-		}
-		catch ( Exception ex ) {
-			Plugin.log.LogError($"Config '{key}' has invalid InputAction: {ex.Message}");
-		}
-	}
-
-	public void bindInputActions()
-	{
-		bind(Plugin.inputMoveAllItemType, "inputMoveAllItemType", inputMoveAllItemType);
-		bind(Plugin.inputMoveAllItems   , "inputMoveAllItems"   , inputMoveAllItems   );
-		bind(Plugin.inputPinItem        , "inputPinItem"        , inputPinItem        );
 	}
 
 	private static readonly FieldInfo field_uGUI_ItemsContainer_container = typeof(uGUI_ItemsContainer).GetField("container", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);

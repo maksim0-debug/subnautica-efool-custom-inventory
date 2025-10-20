@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -36,17 +35,27 @@ public class Plugin : BaseUnityPlugin
 #endif
 	}
 
-	public static InputAction inputMoveAllItemType = new InputAction(name: "moveAllItemType", type: InputActionType.PassThrough, binding: "<Keyboard>/leftCtrl" );
-	public static InputAction inputMoveAllItems    = new InputAction(name: "moveAllItems"   , type: InputActionType.PassThrough, binding: "<Keyboard>/leftShift");
-	public static InputAction inputPinItem         = new InputAction(name: "pinItem"        , type: InputActionType.PassThrough, binding: "<Keyboard>/leftAlt"  );
+	public static GameInput.Button inputMoveAllItemType = EnumHandler.AddEntry<GameInput.Button>("Move all items of type")
+		.CreateInput()
+		.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
+		.WithKeyboardBinding("<Keyboard>/leftCtrl")
+		.SetBindable();
+
+	public static GameInput.Button inputMoveAllItems = EnumHandler.AddEntry<GameInput.Button>("Move all items")
+		.CreateInput()
+		.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
+		.WithKeyboardBinding("<Keyboard>/leftShift")
+		.SetBindable();
+
+	public static GameInput.Button inputPinItem = EnumHandler.AddEntry<GameInput.Button>("Pin item")
+			.CreateInput()
+			.WithCategory(org.efool.subnautica.custom_inventory.Info.title)
+			.WithKeyboardBinding("<Keyboard>/leftAlt")
+			.SetBindable();
 
 	private void Awake()
 	{
 		log = Logger;
-
-		inputMoveAllItemType.Enable();
-		inputMoveAllItems   .Enable();
-		inputPinItem        .Enable();
 
 		config = new ConfigGlobal();
 		config.load();
@@ -354,7 +363,7 @@ static class Patch
 			return false;
 
 		var itemAction = Inventory.main.GetItemAction(item, button);
-		if ( Plugin.inputPinItem.IsPressed() ) {
+		if ( GameInput.GetButtonHeld(Plugin.inputPinItem) ) {
 			if ( button == 0 )
 				PinItem.handlePinItemAction(item);
 		}
@@ -536,12 +545,12 @@ public static class PinItem
 
 		var itemPinned = isPinned(item);
 		var targetItems = new List<InventoryItem>();
-		if ( Plugin.inputMoveAllItems.IsPressed() ) {
+		if ( GameInput.GetButtonHeld(Plugin.inputMoveAllItems) ) {
 			foreach ( var e in container )
 				if ( isPinned(e) == itemPinned )
 					targetItems.Add(e);
 		}
-		else if ( Plugin.inputMoveAllItemType.IsPressed() ) {
+		else if ( GameInput.GetButtonHeld(Plugin.inputMoveAllItemType) ) {
 			foreach ( var e in container.GetItems(item.item.GetTechType()) )
 				if ( isPinned(e) == itemPinned )
 					targetItems.Add(e);
@@ -570,14 +579,14 @@ public static class PinItem
 	public static void handleItemAction(InventoryItem item, ItemAction itemAction)
 	{
 		var targetItems = new List<InventoryItem>();
-		if ( Plugin.inputMoveAllItems.IsPressed() ) {
+		if ( GameInput.GetButtonHeld(Plugin.inputMoveAllItems) ) {
 			foreach ( var e in item.container )
 				if ( !isPinned(e) )
 					targetItems.Add(e);
 		}
 		else {
 			var container = item.container as ItemsContainer;
-			if ( container != null && Plugin.inputMoveAllItemType.IsPressed() ) {
+			if ( container != null && GameInput.GetButtonHeld(Plugin.inputMoveAllItemType) ) {
 				foreach ( var e in container.GetItems(item.item.GetTechType()) )
 					if ( !isPinned(e) )
 						targetItems.Add(e);
