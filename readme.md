@@ -31,14 +31,14 @@
 - Tobey's BepInEx Pack v5
 	- [Nexus Mods](https://www.nexusmods.com/subnautica/mods/1108)
 	- [Github](https://github.com/toebeann/BepInEx.Subnautica)
-- Nautilus v1.0.0-pre.43 (or later)
+- Nautilus v1.0.0-pre.46 (or later)
 	- [Nexus Mods](https://www.nexusmods.com/subnautica/mods/1262)
 	- [Github](https://github.com/SubnauticaModding/Nautilus)
 
 # Installation
 
 - Install Tobey's BepInEx Pack v5
-- Install Nautilus v1.0.0-pre.43 (or later)
+- Install Nautilus v1.0.0-pre.46 (or later)
 - Extract `efool-custom-inventory_#.#.#.zip` to `BepInEx/plugins`
 	- `[game]/BepInEx/plugins/efool-custom-inventory/efool-custom-inventory.dll`
 	- `[game]/BepInEx/plugins/efool-custom-inventory/presets.json`
@@ -48,21 +48,6 @@ Note: `[game]` is the directory containing `Subnautica.exe`
 # Custom Presets
 
 There is no UI option to modify presets. Manually modify `presets.json` at the installed location `[game]/BepInEx/plugins/efool-custom-inventory/presets.json` to add your own entry. See `efool's Hoarder Rules` as a reference.
-
-# Custom Keybinds
-
-Keybinds can no longer be configured in the options menu since Subnautica patch Oct-2025. Instead they must now be configured by manually editing the mod config file:
-
-1. Open `[game]/BepInEx/config/efool-custom-inventory/config.json`
-2. Add/edit:
-
-| Key                    | Default value          |
-| ---------------------- | ---------------------- |
-| `inputMoveAllItemType` | `<Keyboard>/leftCtrl`  |
-| `inputMoveAllItems`    | `<Keyboard>/leftShift` |
-| `inputPinItem`         | `<Keyboard>/leftAlt`   |
-
-3. Restart game to refresh configuration
 
 # Console Commands
 
@@ -130,7 +115,6 @@ Keybinds can no longer be configured in the options menu since Subnautica patch 
 - Bulk item drop occludes PDA
 	- Workaround: close PDA to allow items to move away or manually look elsewhere before opening PDA again
 - Only tested on keyboard/mouse
-- Keybinds cannot be configured in the options menu
 
 # Other Mods
 
