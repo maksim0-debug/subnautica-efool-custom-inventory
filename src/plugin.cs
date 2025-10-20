@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -65,12 +65,19 @@ public class Plugin : BaseUnityPlugin
 
 		WaitScreenHandler.RegisterEarlyLoadTask(custom_inventory.Info.title, (_) => {
 			game = new ConfigPerSave();
-			if ( !config.presetDefault.IsNullOrWhiteSpace() ) {
-				ConfigPerSave.loadPresets();
-				game.copySettings(ConfigPerSave.presets.GetOrDefault(config.presetDefault, ConfigPerSave.default_));
-			}
 			game.load();
 		});
+		WaitScreenHandler.RegisterLateLoadTask(
+			org.efool.subnautica.custom_inventory.Info.title,
+			(_) => {
+				if ( SaveLoadManager.main.timePlayedTotal == 0 && !config.presetDefault.IsNullOrWhiteSpace() ) {
+					ConfigPerSave.loadPresets();
+					game.copySettings(ConfigPerSave.presets.GetOrDefault(config.presetDefault, ConfigPerSave.default_));
+					Plugin.config.syncScrollPanes();
+					OptionsMenu.applyAll();
+					debug("Applied presets to new save");
+				}
+			});
 		SaveUtils.RegisterOnSaveEvent(() => game.save());
 
 		ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
