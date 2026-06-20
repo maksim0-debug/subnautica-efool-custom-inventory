@@ -67,7 +67,18 @@ if ($ghCheck) {
     $response = Read-Host "GitHub CLI (gh) detected. Would you like to create a Draft Release v$version and upload these ZIPs now? (y/n)"
     if ($response -eq 'y' -or $response -eq 'yes') {
         Write-Host "Creating Draft Release v$version on GitHub..." -ForegroundColor Cyan
-        gh release create "v$version" $snZip $bzZip --title "v$version" --notes "Release v$version" --draft
+        
+        $repoName = ""
+        $repoUrl = git config --get remote.origin.url
+        if ($repoUrl -match 'github\.com[:/]([^/]+/[^.]+)') {
+            $repoName = $Matches[1]
+        }
+        
+        if ($repoName) {
+            gh release create "v$version" $snZip $bzZip --repo $repoName --title "v$version" --notes "Release v$version" --draft
+        } else {
+            gh release create "v$version" $snZip $bzZip --title "v$version" --notes "Release v$version" --draft
+        }
         Write-Host "Draft Release v$version created successfully with attached archives!" -ForegroundColor Green
     }
 } else {
