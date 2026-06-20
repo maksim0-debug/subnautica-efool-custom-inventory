@@ -1,0 +1,30 @@
+using System.Reflection;
+using System.Runtime.InteropServices;
+
+using org.efool.subnautica_bz.custom_inventory;
+
+[assembly: AssemblyTitle(Info.title)]
+[assembly: AssemblyDescription(Info.desc)]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("efool")]
+[assembly: AssemblyProduct(Info.name)]
+[assembly: AssemblyCopyright("Copyright 2024-2026")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyVersion(Info.version)]
+[assembly: AssemblyFileVersion(Info.version)]
+
+[assembly: ComVisible(false)]
+
+[assembly: Guid("5b29aa48-0613-4c23-aabc-6cc9e516a2f2")]
+
+namespace org.efool.subnautica_bz.custom_inventory {
+public static class Info
+{
+	public const string FQN = "org.efool.subnautica_bz.custom_inventory";
+	public const string name = "efool-bz-custom-inventory";
+	public const string title = "efool's Custom Inventory BZ";
+	public const string desc = "efool's custom inventory mod for Subnautica Below Zero";
+	public const string version = "0.0.5";
+}
+}
